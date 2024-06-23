@@ -3,18 +3,21 @@ package HW11_01;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Scanner input = new Scanner(System.in);
         System.out.print("Please Enter a Number: ");
         int number = input.nextInt();
 
-        EvenNumber evenNumber = new EvenNumber(number);
-        Thread evenThread = new Thread(evenNumber);
-        evenThread.start();
+        SharedResource sharedResource = new SharedResource();
+        Thread evenThread = new Thread(new EvenNumber(number, sharedResource));
+        Thread oddThread = new Thread(new OddNumber(number, sharedResource));
 
-        OddNumber oddNumber = new OddNumber(number);
-        Thread oddThread = new Thread(oddNumber);
+        evenThread.start();
         oddThread.start();
+
+        evenThread.join();
+        oddThread.join();
+        System.out.println("all Numbers is: " +sharedResource.getAllNumbers());
 
     }
 }
